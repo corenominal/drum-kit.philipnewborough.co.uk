@@ -100,18 +100,14 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        let lastTouchTime = 0;
+        let lastPlayTime = 0;
 
         el.addEventListener('pointerdown', function (event) {
             event.preventDefault();
-            if (event.pointerType === 'touch') {
-                lastTouchTime = Date.now();
-                playInstrument(event);
-            } else if (event.pointerType === 'mouse') {
-                if (Date.now() - lastTouchTime > 500) {
-                    playInstrument(event);
-                }
-            }
+            const now = Date.now();
+            if (now - lastPlayTime < 300) return;
+            lastPlayTime = now;
+            playInstrument(event);
         });
     });
 
