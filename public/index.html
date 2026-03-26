@@ -29,7 +29,15 @@
 <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js');
+            navigator.serviceWorker.register('/sw.js').then(registration => {
+                // When the page becomes visible again (e.g. PWA resumed from background),
+                // check for a newer SW so updates aren't missed between sessions.
+                document.addEventListener('visibilitychange', () => {
+                    if (document.visibilityState === 'visible') {
+                        registration.update();
+                    }
+                });
+            });
         });
         // When a new SW takes control (after an update), reload to get fresh assets.
         // The firstSW guard prevents a reload on the very first install.
