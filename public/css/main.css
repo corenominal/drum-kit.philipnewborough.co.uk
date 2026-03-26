@@ -39,6 +39,8 @@ body {
         cursor: pointer;
         transition: all 0.2s;
         user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent;
 
         &:active {
             background: rgba(255, 255, 255, 0.02);

@@ -68,6 +68,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Instrument touch/click event
     document.querySelectorAll('.instrument').forEach(function (el) {
+        el.addEventListener('contextmenu', function (event) {
+            event.preventDefault();
+        });
         ['touchstart', 'click'].forEach(function (eventType) {
             el.addEventListener(eventType, function (event) {
                 event.preventDefault();
