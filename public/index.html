@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>A Drum Kit for Oliver</title>
+<!-- Icons & Theme Colours -->
+<link rel="icon" type="image/png" sizes="32x32" href="/img/icon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/icon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#B48AF3">
+<meta name="theme-color" content="#B48AF3">
+<!-- Opengraph start -->
+<meta property="og:title" content="A Drum Kit for Oliver" />
+<meta property="og:description" content="A HTML, CSS and JavaScript drum kit for my grandson Oliver." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="/img/og-image-1200x630.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<!-- Opengraph end -->
+<!-- Stylesheets -->
+<link rel="stylesheet" href="css/reset.css">
+<link rel="stylesheet" href="css/main.css">
+<!-- JavaScript -->
+<script defer src="js/vendor/howler.js"></script>
+<script defer src="js/main.js"></script>
+<!-- Service Worker registration -->
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js');
+        });
+    }
+</script>
+</head>
+<body class="purple">
+    <div id="drumkit" class="drumkit">
+        <button class="instrument" data-instrument="crash" ontouchstart=""><img class="spin" src="img/crash.svg" alt="Crash cymbal" draggable="false"></button>
+        <button class="instrument" data-instrument="tom" ontouchstart=""><img class="pulse" src="img/tom.svg" alt="Tom drum" draggable="false"></button>
+        <button class="instrument" data-instrument="hihat" ontouchstart=""><img class="spin" src="img/hihat.svg" alt="Hi hat cymbal" draggable="false"></button>
+        <button class="instrument" data-instrument="snare" ontouchstart=""><img class="pulse" src="img/snare.svg" alt="Snare drum" draggable="false"></button>
+        <button class="instrument" data-instrument="bass" ontouchstart=""><img class="pulse" src="img/bass.svg" alt="Bass drum" draggable="false"></button>
+        <button class="instrument" data-instrument="floortom" ontouchstart=""><img class="pulse" src="img/floortom.svg" alt="Floor tom drum" draggable="false"></button>
+    </div>
+</body>
+</html>
