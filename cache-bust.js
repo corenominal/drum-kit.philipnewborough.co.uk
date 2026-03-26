@@ -54,7 +54,7 @@ for (const { file, htmlRef, swRef, htmlNew, swNew } of TARGETS) {
 
 // Bump the SW CACHE_NAME so stale caches are purged
 sw = sw.replace(
-  /(const CACHE_NAME\s*=\s*['"][^'"]+-)(\d+)(['"]\s*;)/,
+  /(const CACHE_NAME\s*=\s*['"][^'"]+\.)(\d+)(['"]\s*;)/,
   (_, prefix, num, suffix) => `${prefix}${parseInt(num, 10) + 1}${suffix}`
 );
 
