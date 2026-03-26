@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
         el.addEventListener('pointerdown', function (event) {
             event.preventDefault();
             const now = Date.now();
-            if (now - lastPlayTime < 300) return;
+            if (now - lastPlayTime < 100) return;
             lastPlayTime = now;
             playInstrument(event);
         });
