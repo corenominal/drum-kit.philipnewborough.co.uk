@@ -73,7 +73,7 @@
     ],
     "start_url": "/",
     "display": "fullscreen",
-    "orientation": "landscape",
+    "orientation": "portrait",
     "theme_color": "#B48AF3",
     "background_color": "#B48AF3"
 }
