@@ -100,9 +100,18 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
+        let lastTouchTime = 0;
+
         el.addEventListener('pointerdown', function (event) {
             event.preventDefault();
-            playInstrument(event);
+            if (event.pointerType === 'touch') {
+                lastTouchTime = Date.now();
+                playInstrument(event);
+            } else if (event.pointerType === 'mouse') {
+                if (Date.now() - lastTouchTime > 500) {
+                    playInstrument(event);
+                }
+            }
         });
     });
 
