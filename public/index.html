@@ -31,6 +31,14 @@
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js');
         });
+        // When a new SW takes control (after an update), reload to get fresh assets.
+        // The firstSW guard prevents a reload on the very first install.
+        const firstSW = !navigator.serviceWorker.controller;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (!firstSW) {
+                window.location.reload();
+            }
+        });
     }
 </script>
 </head>
