@@ -150,6 +150,20 @@ body {
     }
 }
 
+#cache-version {
+    position: fixed;
+    bottom: 8px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.25);
+    pointer-events: none;
+    z-index: 1;
+    font-family: monospace;
+    letter-spacing: 0.05em;
+}
+
 @keyframes spin {
     from {
         transform: rotate(0deg);

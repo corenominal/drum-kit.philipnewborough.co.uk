@@ -154,4 +154,15 @@ document.addEventListener('DOMContentLoaded', function () {
             startListening();
         }
     }());
+
+    // Display cache version
+    if ('caches' in window) {
+        caches.keys().then(function (keys) {
+            const key = keys.find(function (k) { return k.startsWith('drum-kit'); });
+            if (key) {
+                const el = document.getElementById('cache-version');
+                if (el) el.textContent = key;
+            }
+        });
+    }
 });
