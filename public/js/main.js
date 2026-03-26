@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let touched = false;
 
         function playInstrument(event) {
-            const coords = event.touches ? event.touches[0] : event;
+            const coords = event.changedTouches ? event.changedTouches[0] : event;
             emitSparkles(coords.clientX, coords.clientY);
             emitRings(el);
             addRandomClassToBody();
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        el.addEventListener('touchstart', function (event) {
+        el.addEventListener('touchend', function (event) {
             event.preventDefault();
             touched = true;
             playInstrument(event);
