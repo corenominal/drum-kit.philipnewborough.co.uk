@@ -71,35 +71,49 @@ document.addEventListener('DOMContentLoaded', function () {
         el.addEventListener('contextmenu', function (event) {
             event.preventDefault();
         });
-        ['touchstart', 'click'].forEach(function (eventType) {
-            el.addEventListener(eventType, function (event) {
-                event.preventDefault();
-                const coords = event.touches ? event.touches[0] : event;
-                emitSparkles(coords.clientX, coords.clientY);
-                emitRings(this);
-                addRandomClassToBody();
-                const instrument = this.getAttribute('data-instrument');
-                switch (instrument) {
-                    case 'crash':
-                        sfxCrash.play();
-                        break;
-                    case 'hihat':
-                        sfxHihat.play();
-                        break;
-                    case 'tom':
-                        sfxTom.play();
-                        break;
-                    case 'snare':
-                        sfxSnare.play();
-                        break;
-                    case 'bass':
-                        sfxBass.play();
-                        break;
-                    default:
-                        sfxFloortom.play();
-                        break;
-                }
-            });
+
+        let touched = false;
+
+        function playInstrument(event) {
+            const coords = event.touches ? event.touches[0] : event;
+            emitSparkles(coords.clientX, coords.clientY);
+            emitRings(el);
+            addRandomClassToBody();
+            const instrument = el.getAttribute('data-instrument');
+            switch (instrument) {
+                case 'crash':
+                    sfxCrash.play();
+                    break;
+                case 'hihat':
+                    sfxHihat.play();
+                    break;
+                case 'tom':
+                    sfxTom.play();
+                    break;
+                case 'snare':
+                    sfxSnare.play();
+                    break;
+                case 'bass':
+                    sfxBass.play();
+                    break;
+                default:
+                    sfxFloortom.play();
+                    break;
+            }
+        }
+
+        el.addEventListener('touchstart', function (event) {
+            event.preventDefault();
+            touched = true;
+            playInstrument(event);
+        });
+
+        el.addEventListener('click', function (event) {
+            if (touched) {
+                touched = false;
+                return;
+            }
+            playInstrument(event);
         });
     });
 
