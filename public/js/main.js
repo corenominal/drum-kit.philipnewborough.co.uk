@@ -72,10 +72,12 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
         });
 
-        let touched = false;
+        let lastPlayTime = 0;
 
         function playInstrument(event) {
-            const coords = event.changedTouches ? event.changedTouches[0] : event;
+            const coords = (event.touches && event.touches[0]) ||
+                           (event.changedTouches && event.changedTouches[0]) ||
+                           event;
             emitSparkles(coords.clientX, coords.clientY);
             emitRings(el);
             addRandomClassToBody();
@@ -102,17 +104,15 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        el.addEventListener('touchend', function (event) {
+        el.addEventListener('touchstart', function (event) {
             event.preventDefault();
-            touched = true;
+            lastPlayTime = Date.now();
             playInstrument(event);
         });
 
         el.addEventListener('click', function (event) {
-            if (touched) {
-                touched = false;
-                return;
-            }
+            if (Date.now() - lastPlayTime < 100) return;
+            lastPlayTime = Date.now();
             playInstrument(event);
         });
     });
