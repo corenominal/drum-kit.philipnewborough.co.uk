@@ -2,6 +2,17 @@
     touch-action: pan-x pan-y;
     height: 100%;
 }
+
+@font-face {
+  font-family: "sniglet";
+  src: url("/fonts/sniglet.woff2") format("woff2"),
+       url("/fonts/sniglet.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0021-002C, U+002E-0039, U+003B-007E;
+}
+
 body {
     &.purple {
         background: linear-gradient(135deg, #BD93F9 0%, #6e40c9 25%, #ff79c6 50%, #6e40c9 75%, #BD93F9 100%);
@@ -329,7 +340,7 @@ body {
 }
 
 #splash-content h1 {
-    font-family: 'Arial Rounded MT Bold', 'Arial Black', Arial, sans-serif;
+    font-family: 'sniglet', 'Arial Rounded MT Bold', 'Arial Black', Arial, sans-serif;
     font-size: clamp(1.6rem, 5vw, 2.2rem);
     color: #ffffff;
     text-shadow: 3px 3px 0 rgba(80, 0, 120, 0.4), 0 2px 12px rgba(0, 0, 0, 0.3);
@@ -373,7 +384,7 @@ body {
     font-weight: 900;
     border-radius: 50px;
     cursor: pointer;
-    font-family: 'Arial Rounded MT Bold', 'Arial Black', Arial, sans-serif;
+    font-family: 'sniglet', 'Arial Rounded MT Bold', 'Arial Black', Arial, sans-serif;
     letter-spacing: 0.03em;
     text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.4);
     display: block;
@@ -429,7 +440,7 @@ body {
     font-weight: 700;
     border-radius: 50px;
     cursor: pointer;
-    font-family: 'Arial Rounded MT Bold', 'Arial Black', Arial, sans-serif;
+    font-family: 'sniglet', 'Arial Rounded MT Bold', 'Arial Black', Arial, sans-serif;
     transition: border-color 0.15s, background 0.15s;
 
     &:hover, &:active {
@@ -466,7 +477,7 @@ body {
 }
 
 #help-content h2 {
-    font-family: 'Arial Rounded MT Bold', 'Arial Black', Arial, sans-serif;
+    font-family: 'sniglet', 'Arial Rounded MT Bold', 'Arial Black', Arial, sans-serif;
     font-size: clamp(1.4rem, 5vw, 2rem);
     color: #ffffff;
     text-shadow: 2px 2px 0 rgba(80, 0, 120, 0.5);
@@ -484,7 +495,7 @@ body {
 }
 
 .help-section h3 {
-    font-family: 'Arial Rounded MT Bold', 'Arial Black', Arial, sans-serif;
+    font-family: 'sniglet', 'Arial Rounded MT Bold', 'Arial Black', Arial, sans-serif;
     font-size: 0.95rem;
     font-weight: 900;
     color: #f1fa8c;
@@ -521,7 +532,7 @@ body {
     font-weight: 900;
     border-radius: 50px;
     cursor: pointer;
-    font-family: 'Arial Rounded MT Bold', 'Arial Black', Arial, sans-serif;
+    font-family: 'sniglet', 'Arial Rounded MT Bold', 'Arial Black', Arial, sans-serif;
     text-shadow: 1px 1px 0 rgba(80, 0, 120, 0.4);
     transition: transform 0.15s;
 
@@ -549,7 +560,7 @@ body {
 
 .combo-letter {
     display: inline-block;
-    font-family: 'Arial Black', 'Impact', sans-serif;
+    font-family: 'sniglet', 'Arial Black', 'Impact', sans-serif;
     font-size: clamp(4.5rem, 18vw, 12rem);
     font-weight: 900;
     line-height: 1;
