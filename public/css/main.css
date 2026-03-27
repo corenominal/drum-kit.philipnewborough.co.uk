@@ -125,11 +125,13 @@ body {
         margin: 0 0 0.7rem;
     }
 
-    #splash-btn {
+    #splash-btn-wrapper {
         grid-column: 2;
         grid-row: 2;
         align-self: start;
-        width: fit-content;
+    }
+
+    #splash-btn {
         font-size: 1rem;
         padding: 0.6rem 2rem;
     }
@@ -316,10 +318,36 @@ body {
     font-weight: 900;
 }
 
+#splash-btn-wrapper {
+    position: relative;
+    display: inline-block;
+    border-radius: 54px;
+    padding: 4px;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+    animation: btn-glow 1.4s ease-in-out infinite alternate;
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        top: -50%;
+        left: -50%;
+        background: conic-gradient(from 0deg at 50% 50%, #ff2d78, #ffb86c, #f1fa8c, #50fa7b, #8be9fd, #bd93f9, #ff79c6, #ff2d78);
+        animation: spin 2s linear infinite;
+    }
+
+    &:hover, &:active {
+        transform: scale(1.08);
+    }
+}
+
 #splash-btn {
+    position: relative;
     background: linear-gradient(135deg, #ff2d78, #ffb86c, #f1fa8c);
     color: #5a0030;
-    border: 3px solid rgba(255, 255, 255, 0.7);
+    border: none;
     padding: 0.85rem 2.8rem;
     font-size: 1.3rem;
     font-weight: 900;
@@ -328,12 +356,7 @@ body {
     font-family: 'Arial Rounded MT Bold', 'Arial Black', Arial, sans-serif;
     letter-spacing: 0.03em;
     text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.4);
-    transition: transform 0.15s, box-shadow 0.15s;
-    animation: btn-glow 1.4s ease-in-out infinite alternate;
-
-    &:hover, &:active {
-        transform: scale(1.08);
-    }
+    display: block;
 }
 
 @keyframes splash-bounce {
