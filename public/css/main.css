@@ -185,3 +185,34 @@ body {
         transform: scale(1.0);
     }
 }
+
+/* ── COMBO! overlay ─────────────────────────────────────────────────────── */
+#combo-text {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 99999;
+    display: flex;
+    gap: 0.08em;
+}
+
+.combo-letter {
+    display: inline-block;
+    font-family: 'Arial Black', 'Impact', sans-serif;
+    font-size: clamp(3.5rem, 14vw, 9rem);
+    font-weight: 900;
+    line-height: 1;
+    text-shadow: 0 0 40px currentColor, 0 0 80px currentColor, 3px 3px 0 rgba(0, 0, 0, 0.4);
+    animation: combo-letter-anim 1.4s ease-out both;
+    animation-delay: var(--letter-delay, 0s);
+}
+
+@keyframes combo-letter-anim {
+    0%   { opacity: 0; transform: scale(0) rotate(var(--spin, 0deg)); }
+    22%  { opacity: 1; transform: scale(1.6) rotate(0deg); }
+    42%  { opacity: 1; transform: scale(1) rotate(0deg); }
+    65%  { opacity: 1; transform: scale(1) rotate(0deg); }
+    100% { opacity: 0; transform: translate(var(--ex, 0px), var(--ey, 0px)) scale(0.1) rotate(var(--er, 0deg)); }
+}

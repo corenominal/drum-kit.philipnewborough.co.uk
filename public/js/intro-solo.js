@@ -253,6 +253,32 @@
         });
     }
 
+    function showCombo() {
+        const existing = document.getElementById('combo-text');
+        if (existing) existing.remove();
+        const colors = ['#FF79C6', '#BD93F9', '#66D9EF', '#F1FA8C', '#FFB86C', '#ff5555'];
+        const letters = 'COMBO!'.split('');
+        const container = document.createElement('div');
+        container.id = 'combo-text';
+        letters.forEach(function (ch, i) {
+            const span = document.createElement('span');
+            span.className = 'combo-letter';
+            span.textContent = ch;
+            span.style.color = colors[i % colors.length];
+            span.style.setProperty('--letter-delay', (i * 0.05) + 's');
+            const angle = Math.random() * 2 * Math.PI;
+            const dist = 150 + Math.random() * 130;
+            span.style.setProperty('--ex', (Math.cos(angle) * dist).toFixed(1) + 'px');
+            span.style.setProperty('--ey', (Math.sin(angle) * dist).toFixed(1) + 'px');
+            span.style.setProperty('--spin', (Math.random() * 60 - 30).toFixed(1) + 'deg');
+            span.style.setProperty('--er', (Math.random() * 90 - 45).toFixed(1) + 'deg');
+            container.appendChild(span);
+        });
+        document.body.appendChild(container);
+        // Remove after all letter animations complete
+        setTimeout(function () { container.remove(); }, (letters.length - 1) * 50 + 1500);
+    }
+
     // ── Combo state ───────────────────────────────────────────────────────────
     const ALL_INSTRUMENTS = new Set(['crash', 'hihat', 'tom', 'snare', 'bass', 'floortom']);
     let soloPlaying = false;
@@ -296,6 +322,7 @@
                     resetAllStreaks();
                     hitSoFar    = new Set();
                     soloPlaying = true;
+                    showCombo();
                     playHits(SOLOS[instrument].hits);
                     setTimeout(function () { soloPlaying = false; }, SOLOS[instrument].duration);
                     return;
@@ -312,6 +339,7 @@
                     resetAllStreaks();
                     hitSoFar    = new Set();
                     soloPlaying = true;
+                    showCombo();
                     playHits(classicHits);
                     setTimeout(function () { soloPlaying = false; }, 4500);
                 }
