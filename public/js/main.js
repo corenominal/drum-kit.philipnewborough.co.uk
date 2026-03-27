@@ -66,15 +66,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    const sparkleShapes = ['sparkle-circle', 'sparkle-diamond', 'sparkle-triangle', 'sparkle-star'];
+
     function emitSparkles(x, y) {
         const count = 16;
         for (let i = 0; i < count; i++) {
             const el = document.createElement('span');
-            el.className = 'sparkle';
+            const shape = sparkleShapes[Math.floor(Math.random() * sparkleShapes.length)];
+            el.className = 'sparkle ' + shape;
             const angle = (i / count) * 2 * Math.PI;
             const distance = 80 + Math.random() * 120;
-            el.style.left = (x - 14) + 'px';
-            el.style.top = (y - 14) + 'px';
+            el.style.left = (x - 24) + 'px';
+            el.style.top = (y - 24) + 'px';
             el.style.background = sparkleColors[Math.floor(Math.random() * sparkleColors.length)];
             el.style.setProperty('--dx', Math.cos(angle) * distance + 'px');
             el.style.setProperty('--dy', Math.sin(angle) * distance + 'px');
