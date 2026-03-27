@@ -2,7 +2,7 @@
 // To push an update to users: bump this version string (e.g. v2, v3 …),
 // then deploy.  The browser will install the new SW, delete the old cache,
 // and serve fresh assets on the next page load.
-const CACHE_NAME = 'drum-kit-v1.65';
+const CACHE_NAME = 'drum-kit-v1.66';
 
 // ─── Assets to pre-cache on install ───────────────────────────────────────────
 const ASSETS = [
@@ -11,7 +11,7 @@ const ASSETS = [
     '/manifest.json',
     '/css/reset.css',
     '/css/main.css?v=9f8dcf34',
-    '/js/main.js?v=d8141843',
+    '/js/main.js?v=ba8387ab',
     '/js/intro-solo.js?v=df360ab6',
     '/js/vendor/howler.js',
     '/audio/bass.mp3',

@@ -104,10 +104,10 @@ document.addEventListener('DOMContentLoaded', function () {
         let lastPlayTime = 0;
         let holdTimer = null;
 
-        function triggerPlay(x, y) {
+        function triggerPlay(x, y, trusted) {
             emitSparkles(x, y);
             emitRings(el);
-            addRandomClassToBody();
+            if (trusted) addRandomClassToBody();
             playSound(instrument);
         }
 
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const now = Date.now();
             if (now - lastPlayTime >= 100) {
                 lastPlayTime = now;
-                triggerPlay(event.clientX, event.clientY);
+                triggerPlay(event.clientX, event.clientY, event.isTrusted);
             }
 
             // Hold 500ms → toggle loop on/off (skip for synthetic combo events)
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const interval = loopConfig[instrument] ?? 1000;
                     activeLoops[instrument] = setInterval(function () {
                         const r = el.getBoundingClientRect();
-                        triggerPlay(r.left + r.width / 2, r.top + r.height / 2);
+                        triggerPlay(r.left + r.width / 2, r.top + r.height / 2, true);
                     }, interval);
                 }
             }, 500);
