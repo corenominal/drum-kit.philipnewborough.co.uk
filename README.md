@@ -1,5 +1,9 @@
 # A Drum Kit for Oliver
 
+> [!IMPORTANT]
+> **This repository is no longer maintained.**  
+> Development has moved to the canvas-based version for improved performance: [corenominal/drum-kit-canvas.philipnewborough.co.uk](https://github.com/corenominal/drum-kit-canvas.philipnewborough.co.uk).
+
 ![A Drum Kit for Oliver](public/img/og-image-1200x630.png)
 
 A browser-based drum kit built with HTML, CSS, and JavaScript, made as a fun interactive toy for my grandson Oliver.
