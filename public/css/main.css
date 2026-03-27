@@ -14,6 +14,7 @@
 }
 
 body {
+    transition: background 0.2s ease;
     &.purple {
         background: linear-gradient(135deg, #BD93F9 0%, #6e40c9 25%, #ff79c6 50%, #6e40c9 75%, #BD93F9 100%);
         background-size: 300% 300%;
@@ -416,7 +417,7 @@ body {
     inset: 0;
     pointer-events: none;
     z-index: 99998;
-    background: radial-gradient(ellipse at center, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 70%);
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 70%);
     animation: combo-flash-anim 0.45s ease-out forwards;
 }
 
