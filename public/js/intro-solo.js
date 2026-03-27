@@ -55,9 +55,31 @@
         });
     }
 
+    // ── Secret combo: hit all 6 instruments to trigger the solo ──────────────
+    const ALL_INSTRUMENTS = new Set(['crash', 'hihat', 'tom', 'snare', 'bass', 'floortom']);
+    let soloPlaying = false;
+    let hitSoFar    = new Set();
+
+    function setupComboListener() {
+        document.querySelectorAll('[data-instrument]').forEach(function (el) {
+            el.addEventListener('pointerdown', function () {
+                if (soloPlaying) return;           // ignore hits fired by the solo itself
+                hitSoFar.add(el.getAttribute('data-instrument'));
+                if (hitSoFar.size === ALL_INSTRUMENTS.size) {
+                    hitSoFar = new Set();
+                    soloPlaying = true;
+                    playSolo();
+                    // longest hit offset is 3300 ms; clear the flag with a safe margin
+                    setTimeout(function () { soloPlaying = false; }, 4500);
+                }
+            }, true);  // capture so it runs before main.js's debounce check
+        });
+    }
+
     // Defer until DOMContentLoaded (safe whether the script is deferred or not),
     // then add a short pause so main.js has finished setting up its listeners.
     function init() {
+        setupComboListener();
         setTimeout(playSolo, 600);
     }
 
