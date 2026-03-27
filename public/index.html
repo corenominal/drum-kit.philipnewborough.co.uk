@@ -21,11 +21,11 @@
 <!-- Opengraph end -->
 <!-- Stylesheets -->
 <link rel="stylesheet" href="css/reset.css">
-<link rel="stylesheet" href="css/main.css?v=24e5cf43">
+<link rel="stylesheet" href="css/main.css?v=7a28e92a">
 <!-- JavaScript -->
 <script defer src="js/vendor/howler.js"></script>
-<script defer src="js/main.js?v=31c63190"></script>
-<script defer src="js/intro-solo.js?v=43dfe3c9"></script>
+<script defer src="js/main.js?v=f23d4757"></script>
+<script defer src="js/intro-solo.js?v=f2a808dd"></script>
 <!-- Service Worker registration -->
 <script>
     if ('serviceWorker' in navigator) {
@@ -52,6 +52,13 @@
 </script>
 </head>
 <body class="purple">
+    <div id="splash-modal">
+        <div id="splash-content">
+            <img src="img/bass.svg" alt="Bass drum" id="splash-drum">
+            <h1>Welcome to<br>Oliver's Drum Kit</h1>
+            <button id="splash-btn">Let's Play!</button>
+        </div>
+    </div>
     <div id="drumkit" class="drumkit">
         <button class="instrument" data-instrument="crash"><img class="spin" src="img/crash.svg" alt="Crash cymbal" draggable="false"></button>
         <button class="instrument" data-instrument="tom"><img class="pulse" src="img/tom.svg" alt="Tom drum" draggable="false"></button>
@@ -61,5 +68,33 @@
         <button class="instrument" data-instrument="floortom"><img class="pulse" src="img/floortom.svg" alt="Floor tom drum" draggable="false"></button>
     </div>
     <div id="cache-version"></div>
+    <script>
+        document.getElementById('splash-btn').addEventListener('click', function () {
+            if (window.playSplashSolo) window.playSplashSolo();
+            const modal = document.getElementById('splash-modal');
+            const content = document.getElementById('splash-content');
+            modal.classList.add('exploding');
+            // Burst particles from button centre
+            const btn = document.getElementById('splash-btn');
+            const r = btn.getBoundingClientRect();
+            const cx = r.left + r.width / 2;
+            const cy = r.top + r.height / 2;
+            const colors = ['#BD93F9','#FF79C6','#F1FA8C','#FFB86C','#50FA7B','#8BE9FD','#ffffff','#ff2d78'];
+            for (let i = 0; i < 28; i++) {
+                const p = document.createElement('span');
+                p.className = 'sparkle';
+                const angle = (i / 28) * 2 * Math.PI;
+                const dist = 80 + Math.random() * 180;
+                p.style.cssText = `left:${cx - 14}px;top:${cy - 14}px;background:${colors[i % colors.length]};width:${10 + Math.random() * 20}px;height:${10 + Math.random() * 20}px;`;
+                p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+                p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+                document.body.appendChild(p);
+                p.addEventListener('animationend', () => p.remove(), { once: true });
+            }
+            content.addEventListener('animationend', function () {
+                modal.style.display = 'none';
+            }, { once: true });
+        });
+    </script>
 </body>
 </html>

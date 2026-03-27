@@ -302,8 +302,10 @@
 
     function setupComboListener() {
         document.querySelectorAll('[data-instrument]').forEach(function (el) {
-            el.addEventListener('pointerdown', function () {
+            el.addEventListener('pointerdown', function (event) {
+                if (!event.isTrusted) return;          // ignore synthetic solo events
                 if (soloPlaying) return;
+                if (window._drumKitActiveLoops && Object.keys(window._drumKitActiveLoops).length > 0) return;
 
                 const instrument = el.getAttribute('data-instrument');
 
@@ -351,7 +353,6 @@
     // then add a short pause so main.js has finished setting up its listeners.
     function init() {
         setupComboListener();
-        setTimeout(function () { playHits(classicHits); }, 600);
     }
 
     if (document.readyState === 'loading') {
@@ -469,8 +470,10 @@
 
     function setupComboListener() {
         document.querySelectorAll('[data-instrument]').forEach(function (el) {
-            el.addEventListener('pointerdown', function () {
+            el.addEventListener('pointerdown', function (event) {
+                if (!event.isTrusted) return;      // ignore synthetic solo events
                 if (soloPlaying) return;           // ignore hits fired by the solo itself
+                if (window._drumKitActiveLoops && Object.keys(window._drumKitActiveLoops).length > 0) return;
 
                 const instrument = el.getAttribute('data-instrument');
 
@@ -506,11 +509,17 @@
         });
     }
 
+    window.playSplashSolo = function () {
+        if (soloPlaying) return;
+        soloPlaying = true;
+        playSolo();
+        setTimeout(function () { soloPlaying = false; }, 4500);
+    };
+
     // Defer until DOMContentLoaded (safe whether the script is deferred or not),
     // then add a short pause so main.js has finished setting up its listeners.
     function init() {
         setupComboListener();
-        setTimeout(playSolo, 600);
     }
 
     if (document.readyState === 'loading') {

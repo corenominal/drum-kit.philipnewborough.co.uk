@@ -50,6 +50,12 @@ body {
             }
         }
 
+        &.looping {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.5);
+            animation: looping-pulse 0.6s ease-in-out infinite alternate;
+        }
+
         img {
             max-width: 96%;
             height: auto;
@@ -92,6 +98,41 @@ body {
         grid-template-rows: 50% 50%;
     }
 
+    #splash-content {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto;
+        align-items: center;
+        text-align: left;
+        max-width: 80vw;
+        max-height: 80vh;
+        padding: 1rem 1.5rem;
+        column-gap: 1.2rem;
+        box-sizing: border-box;
+    }
+
+    #splash-drum {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+        width: clamp(70px, 14vh, 120px);
+        animation: none;
+    }
+
+    #splash-content h1 {
+        grid-column: 2;
+        grid-row: 1;
+        font-size: clamp(1.2rem, 4vh, 1.8rem);
+        margin: 0 0 0.7rem;
+    }
+
+    #splash-btn {
+        grid-column: 2;
+        grid-row: 2;
+        align-self: start;
+        width: fit-content;
+        font-size: 1rem;
+        padding: 0.6rem 2rem;
+    }
 }
 
 .ring {
@@ -186,6 +227,15 @@ body {
     }
 }
 
+@keyframes looping-pulse {
+    from {
+        box-shadow: 0 0 12px rgba(255, 255, 255, 0.25), inset 0 0 12px rgba(255, 255, 255, 0.08);
+    }
+    to {
+        box-shadow: 0 0 36px rgba(255, 255, 255, 0.6), inset 0 0 24px rgba(255, 255, 255, 0.2);
+    }
+}
+
 /* ── COMBO! overlay ─────────────────────────────────────────────────────── */
 #combo-text {
     position: fixed;
@@ -196,6 +246,96 @@ body {
     z-index: 99999;
     display: flex;
     gap: 0.08em;
+}
+
+/* ── Splash Modal ───────────────────────────────────────────────────────── */
+#splash-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(6px);
+
+    &.exploding {
+        animation: modal-backdrop-fade 0.55s ease-out forwards;
+
+        #splash-content {
+            animation: content-explode 0.55s ease-out forwards;
+        }
+    }
+}
+
+#splash-content {
+    background: linear-gradient(135deg, #bd93f9 0%, #ff79c6 30%, #ffb86c 60%, #50fa7b 80%, #8be9fd 100%);
+    background-size: 300% 300%;
+    animation: gradient-shift 3s ease infinite;
+    border-radius: 28px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    box-shadow: 0 0 60px rgba(189, 147, 249, 0.8), 0 0 120px rgba(255, 121, 198, 0.4), 0 20px 60px rgba(0, 0, 0, 0.5);
+    max-width: 420px;
+    width: 88%;
+}
+
+#splash-drum {
+    width: 170px;
+    height: auto;
+    animation: splash-bounce 1.2s ease-in-out infinite;
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
+}
+
+#splash-content h1 {
+    font-family: 'Arial Rounded MT Bold', 'Arial Black', Arial, sans-serif;
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    color: #ffffff;
+    text-shadow: 3px 3px 0 rgba(80, 0, 120, 0.4), 0 2px 12px rgba(0, 0, 0, 0.3);
+    margin: 1.2rem 0 1.5rem;
+    line-height: 1.25;
+    font-weight: 900;
+}
+
+#splash-btn {
+    background: linear-gradient(135deg, #ff2d78, #ffb86c, #f1fa8c);
+    color: #5a0030;
+    border: 3px solid rgba(255, 255, 255, 0.7);
+    padding: 0.85rem 2.8rem;
+    font-size: 1.3rem;
+    font-weight: 900;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: 'Arial Rounded MT Bold', 'Arial Black', Arial, sans-serif;
+    letter-spacing: 0.03em;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+    animation: btn-glow 1.4s ease-in-out infinite alternate;
+
+    &:hover, &:active {
+        transform: scale(1.08);
+    }
+}
+
+@keyframes splash-bounce {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-10px) scale(1.06); }
+}
+
+@keyframes btn-glow {
+    from { box-shadow: 0 6px 25px rgba(255, 45, 120, 0.5), 0 0 0 0 rgba(255, 255, 255, 0); }
+    to   { box-shadow: 0 6px 35px rgba(255, 45, 120, 0.8), 0 0 20px 4px rgba(255, 255, 255, 0.35); }
+}
+
+@keyframes modal-backdrop-fade {
+    0%   { opacity: 1; }
+    100% { opacity: 0; pointer-events: none; }
+}
+
+@keyframes content-explode {
+    0%   { transform: scale(1);    opacity: 1; }
+    25%  { transform: scale(1.18); opacity: 1; }
+    100% { transform: scale(4.5);  opacity: 0; }
 }
 
 .combo-letter {

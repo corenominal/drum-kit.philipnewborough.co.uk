@@ -7,6 +7,31 @@ document.addEventListener('DOMContentLoaded', function () {
     const sfxBass = new Howl({src: ['./audio/bass.mp3']});
     const sfxFloortom = new Howl({src: ['./audio/floortom.mp3']});
 
+    // Loop repeat intervals (ms) per instrument – different timings let you layer a beat
+    const loopConfig = {
+        crash:    2000,   // ~whole note at 120 BPM
+        hihat:    250,    // ~8th note at 120 BPM
+        tom:      750,    // ~dotted quarter at 120 BPM
+        snare:    1000,   // ~half note / backbeat at 120 BPM
+        bass:     500,    // ~quarter note at 120 BPM
+        floortom: 1500,   // ~dotted half at 120 BPM
+    };
+
+    // Tracks active loops: instrument name → setInterval ID
+    const activeLoops = {};
+    window._drumKitActiveLoops = activeLoops;
+
+    function playSound(instrument) {
+        switch (instrument) {
+            case 'crash':    sfxCrash.play();    break;
+            case 'hihat':    sfxHihat.play();    break;
+            case 'tom':      sfxTom.play();      break;
+            case 'snare':    sfxSnare.play();    break;
+            case 'bass':     sfxBass.play();     break;
+            default:         sfxFloortom.play(); break;
+        }
+    }
+
     // Function to change background colour
     function addRandomClassToBody() {
         const classes = ['purple', 'blue', 'pink', 'yellow'];
@@ -72,42 +97,55 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
         });
 
-        function playInstrument(event) {
-            const coords = event;
-            emitSparkles(coords.clientX, coords.clientY);
+        const instrument = el.getAttribute('data-instrument');
+        let lastPlayTime = 0;
+        let holdTimer = null;
+
+        function triggerPlay(x, y) {
+            emitSparkles(x, y);
             emitRings(el);
             addRandomClassToBody();
-            const instrument = el.getAttribute('data-instrument');
-            switch (instrument) {
-                case 'crash':
-                    sfxCrash.play();
-                    break;
-                case 'hihat':
-                    sfxHihat.play();
-                    break;
-                case 'tom':
-                    sfxTom.play();
-                    break;
-                case 'snare':
-                    sfxSnare.play();
-                    break;
-                case 'bass':
-                    sfxBass.play();
-                    break;
-                default:
-                    sfxFloortom.play();
-                    break;
-            }
+            playSound(instrument);
         }
-
-        let lastPlayTime = 0;
 
         el.addEventListener('pointerdown', function (event) {
             event.preventDefault();
+
+            // Immediate single hit on press (debounced)
             const now = Date.now();
-            if (now - lastPlayTime < 100) return;
-            lastPlayTime = now;
-            playInstrument(event);
+            if (now - lastPlayTime >= 100) {
+                lastPlayTime = now;
+                triggerPlay(event.clientX, event.clientY);
+            }
+
+            // Hold 500ms → toggle loop on/off (skip for synthetic combo events)
+            if (!event.isTrusted) return;
+            holdTimer = setTimeout(function () {
+                if (activeLoops[instrument]) {
+                    clearInterval(activeLoops[instrument]);
+                    delete activeLoops[instrument];
+                    el.classList.remove('looping');
+                } else {
+                    el.classList.add('looping');
+                    const interval = loopConfig[instrument] ?? 1000;
+                    activeLoops[instrument] = setInterval(function () {
+                        const r = el.getBoundingClientRect();
+                        triggerPlay(r.left + r.width / 2, r.top + r.height / 2);
+                    }, interval);
+                }
+            }, 500);
+        });
+
+        el.addEventListener('pointerup', function () {
+            clearTimeout(holdTimer);
+        });
+
+        el.addEventListener('pointercancel', function () {
+            clearTimeout(holdTimer);
+        });
+
+        el.addEventListener('pointerleave', function () {
+            clearTimeout(holdTimer);
         });
     });
 
