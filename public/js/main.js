@@ -49,12 +49,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // Sparkle colours
     const sparkleColors = ['#BD93F9', '#66D9EF', '#FF79C6', '#F1FA8C', '#ffffff', '#FFB86C'];
 
-    function emitRings(el) {
+    function emitRings(el, ringCount) {
+        ringCount = ringCount !== undefined ? ringCount : 3;
         const rect = el.getBoundingClientRect();
         const cx = rect.left + rect.width / 2;
         const cy = rect.top + rect.height / 2;
-        const count = 3;
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < ringCount; i++) {
             const ring = document.createElement('span');
             ring.className = 'ring';
             ring.style.left = cx + 'px';
@@ -68,8 +68,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const sparkleShapes = ['sparkle-circle', 'sparkle-diamond', 'sparkle-triangle', 'sparkle-star'];
 
-    function emitSparkles(x, y) {
-        const count = 16;
+    function emitSparkles(x, y, count) {
+        count = count !== undefined ? count : 16;
         for (let i = 0; i < count; i++) {
             const el = document.createElement('span');
             const shape = sparkleShapes[Math.floor(Math.random() * sparkleShapes.length)];
@@ -105,8 +105,8 @@ document.addEventListener('DOMContentLoaded', function () {
         let holdTimer = null;
 
         function triggerPlay(x, y, trusted) {
-            emitSparkles(x, y);
-            emitRings(el);
+            emitSparkles(x, y, trusted ? 16 : 4);
+            emitRings(el, trusted ? 3 : 1);
             if (trusted) addRandomClassToBody();
             playSound(instrument);
         }
