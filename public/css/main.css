@@ -181,6 +181,25 @@ body {
     }
 }
 
+.firefly {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99999;
+    animation: firefly-float var(--ff-dur, 3s) ease-in-out forwards;
+    box-shadow: 0 0 8px 4px var(--ff-color, #F1FA8C);
+}
+
+@keyframes firefly-float {
+    0%   { opacity: 0;   transform: translate(0, 0) scale(0.8); }
+    15%  { opacity: 0.9; transform: translate(calc(var(--dx) * 0.15), calc(var(--dy) * 0.15)) scale(1); }
+    30%  { opacity: 0.1; transform: translate(calc(var(--dx) * 0.3),  calc(var(--dy) * 0.3)); }
+    50%  { opacity: 0.9; transform: translate(calc(var(--dx) * 0.5),  calc(var(--dy) * 0.5)); }
+    65%  { opacity: 0.1; transform: translate(calc(var(--dx) * 0.65), calc(var(--dy) * 0.65)); }
+    82%  { opacity: 0.9; transform: translate(calc(var(--dx) * 0.82), calc(var(--dy) * 0.82)) scale(1); }
+    100% { opacity: 0;   transform: translate(var(--dx), var(--dy)) scale(0.4); }
+}
+
 @keyframes gradient-shift {
     0% {
         background-position: 0% 50%;

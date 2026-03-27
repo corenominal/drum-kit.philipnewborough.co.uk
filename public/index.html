@@ -21,7 +21,7 @@
 <!-- Opengraph end -->
 <!-- Stylesheets -->
 <link rel="stylesheet" href="css/reset.css">
-<link rel="stylesheet" href="css/main.css?v=7190c18a">
+<link rel="stylesheet" href="css/main.css?v=d47f9223">
 <!-- JavaScript -->
 <script defer src="js/vendor/howler.js"></script>
 <script defer src="js/main.js?v=f23d4757"></script>
@@ -69,7 +69,40 @@
     </div>
     <div id="cache-version"></div>
     <script>
+        const colors = ['#BD93F9','#FF79C6','#F1FA8C','#FFB86C','#50FA7B','#8BE9FD','#ffffff','#ff2d78'];
+        const fireflyColors = ['#F1FA8C','#c8ffaa','#50FA7B','#FFB86C','#ffffc0','#aaffaa','#ffffff'];
+
+        // Firefly effect while the welcome modal is visible
+        function spawnFirefly() {
+            const p = document.createElement('span');
+            p.className = 'firefly';
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            const angle = Math.random() * 2 * Math.PI;
+            const dist = 30 + Math.random() * 70;
+            const size = 4 + Math.random() * 4;
+            const color = fireflyColors[Math.floor(Math.random() * fireflyColors.length)];
+            const dur = (2 + Math.random() * 2.5).toFixed(2);
+            p.style.cssText = `left:${x - size / 2}px;top:${y - size / 2}px;width:${size}px;height:${size}px;background:${color};`;
+            p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+            p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+            p.style.setProperty('--ff-color', color);
+            p.style.setProperty('--ff-dur', dur + 's');
+            document.body.appendChild(p);
+            p.addEventListener('animationend', () => p.remove(), { once: true });
+        }
+
+        let splashSparkleTimer;
+        function scheduleSplashSparkle() {
+            splashSparkleTimer = setTimeout(function () {
+                spawnFirefly();
+                scheduleSplashSparkle();
+            }, 200 + Math.random() * 400);
+        }
+        scheduleSplashSparkle();
+
         document.getElementById('splash-btn').addEventListener('click', function () {
+            clearTimeout(splashSparkleTimer);
             if (window.playSplashSolo) window.playSplashSolo();
             const modal = document.getElementById('splash-modal');
             const content = document.getElementById('splash-content');
@@ -79,7 +112,6 @@
             const r = btn.getBoundingClientRect();
             const cx = r.left + r.width / 2;
             const cy = r.top + r.height / 2;
-            const colors = ['#BD93F9','#FF79C6','#F1FA8C','#FFB86C','#50FA7B','#8BE9FD','#ffffff','#ff2d78'];
             for (let i = 0; i < 28; i++) {
                 const p = document.createElement('span');
                 p.className = 'sparkle';
@@ -93,6 +125,14 @@
             }
             content.addEventListener('animationend', function () {
                 modal.style.display = 'none';
+                // Resume fireflies in the background indefinitely
+                function scheduleBackgroundFirefly() {
+                    splashSparkleTimer = setTimeout(function () {
+                        spawnFirefly();
+                        scheduleBackgroundFirefly();
+                    }, 300 + Math.random() * 600);
+                }
+                scheduleBackgroundFirefly();
             }, { once: true });
         });
     </script>
