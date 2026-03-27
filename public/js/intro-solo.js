@@ -256,7 +256,16 @@
     function showCombo() {
         const existing = document.getElementById('combo-text');
         if (existing) existing.remove();
-        const colors = ['#FF79C6', '#BD93F9', '#66D9EF', '#F1FA8C', '#FFB86C', '#ff5555'];
+        const existingFlash = document.getElementById('combo-flash');
+        if (existingFlash) existingFlash.remove();
+
+        // Full-screen burst flash
+        const flash = document.createElement('div');
+        flash.id = 'combo-flash';
+        document.body.appendChild(flash);
+        setTimeout(function () { flash.remove(); }, 500);
+
+        const colors = ['#FF2D78', '#FF79C6', '#BD93F9', '#8BE9FD', '#50FA7B', '#F1FA8C', '#FFB86C'];
         const letters = 'COMBO!'.split('');
         const container = document.createElement('div');
         container.id = 'combo-text';
@@ -265,18 +274,18 @@
             span.className = 'combo-letter';
             span.textContent = ch;
             span.style.color = colors[i % colors.length];
-            span.style.setProperty('--letter-delay', (i * 0.05) + 's');
+            span.style.setProperty('--letter-delay', (i * 0.06) + 's');
             const angle = Math.random() * 2 * Math.PI;
-            const dist = 150 + Math.random() * 130;
+            const dist = 200 + Math.random() * 160;
             span.style.setProperty('--ex', (Math.cos(angle) * dist).toFixed(1) + 'px');
             span.style.setProperty('--ey', (Math.sin(angle) * dist).toFixed(1) + 'px');
-            span.style.setProperty('--spin', (Math.random() * 60 - 30).toFixed(1) + 'deg');
-            span.style.setProperty('--er', (Math.random() * 90 - 45).toFixed(1) + 'deg');
+            span.style.setProperty('--spin', (Math.random() * 80 - 40).toFixed(1) + 'deg');
+            span.style.setProperty('--er', (Math.random() * 120 - 60).toFixed(1) + 'deg');
             container.appendChild(span);
         });
         document.body.appendChild(container);
         // Remove after all letter animations complete
-        setTimeout(function () { container.remove(); }, (letters.length - 1) * 50 + 1500);
+        setTimeout(function () { container.remove(); }, (letters.length - 1) * 60 + 1800);
     }
 
     // ── Combo state ───────────────────────────────────────────────────────────
