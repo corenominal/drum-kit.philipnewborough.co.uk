@@ -2,9 +2,339 @@
 // Automatically plays a short drum solo when the page first loads.
 // To disable, simply remove (or comment out) the <script> tag for this file in index.html.
 (function () {
-    // Beat pattern: [delay_ms, instrument_name]
-    // Spaced so that the same instrument is never hit within 100 ms of itself
-    // (honouring the debounce in main.js).
+
+    // ── Solo patterns ─────────────────────────────────────────────────────────
+    // Each entry is [delay_ms, instrument]. Same instrument is always >= 150 ms
+    // apart to honour the 100 ms debounce in main.js.
+
+    // Classic intro solo — plays on load and when all 6 instruments are hit once
+    const classicHits = [
+        [   0, 'crash'   ],
+        [   0, 'bass'    ],
+        [ 300, 'hihat'   ],
+        [ 600, 'hihat'   ],
+        [ 600, 'snare'   ],
+        [ 900, 'hihat'   ],
+        [1200, 'bass'    ],
+        [1200, 'hihat'   ],
+        [1500, 'snare'   ],
+        [1500, 'hihat'   ],
+        [1800, 'hihat'   ],
+        [2100, 'tom'     ],
+        [2280, 'tom'     ],
+        [2460, 'snare'   ],
+        [2640, 'floortom'],
+        [2820, 'bass'    ],
+        [2950, 'snare'   ],
+        [3080, 'snare'   ],
+        [3300, 'crash'   ],
+        [3300, 'bass'    ],
+    ];
+
+    // Per-instrument solos — triggered by 3 consecutive hits on that instrument
+    const SOLOS = {
+        crash: {
+            duration: 4500,
+            hits: [
+                [   0, 'crash'],
+                [ 300, 'crash'],
+                [ 300, 'bass' ],
+                [ 600, 'crash'],
+                [ 900, 'crash'],
+                [ 900, 'hihat'],
+                [1200, 'crash'],
+                [1200, 'bass' ],
+                [1500, 'crash'],
+                [1500, 'hihat'],
+                [1800, 'crash'],
+                [2100, 'crash'],
+                [2100, 'bass' ],
+                [2400, 'crash'],
+                [2400, 'hihat'],
+                [2700, 'crash'],
+                [2700, 'snare'],
+                [2900, 'crash'],
+                [3100, 'crash'],
+                [3100, 'bass' ],
+                [3300, 'crash'],
+                [3300, 'bass' ],
+            ],
+        },
+        hihat: {
+            duration: 4500,
+            hits: [
+                [   0, 'hihat'],
+                [ 150, 'hihat'],
+                [ 300, 'hihat'],
+                [ 300, 'snare'],
+                [ 450, 'hihat'],
+                [ 600, 'hihat'],
+                [ 600, 'bass' ],
+                [ 750, 'hihat'],
+                [ 900, 'hihat'],
+                [ 900, 'snare'],
+                [1050, 'hihat'],
+                [1200, 'hihat'],
+                [1200, 'bass' ],
+                [1350, 'hihat'],
+                [1500, 'hihat'],
+                [1500, 'snare'],
+                [1650, 'hihat'],
+                [1800, 'hihat'],
+                [1950, 'hihat'],
+                [1950, 'bass' ],
+                [2100, 'hihat'],
+                [2100, 'snare'],
+                [2250, 'hihat'],
+                [2400, 'hihat'],
+                [2550, 'hihat'],
+                [2550, 'bass' ],
+                [2700, 'hihat'],
+                [2850, 'hihat'],
+                [2850, 'snare'],
+                [3000, 'hihat'],
+                [3000, 'crash'],
+                [3000, 'bass' ],
+            ],
+        },
+        tom: {
+            duration: 5000,
+            hits: [
+                [   0, 'tom'     ],
+                [ 180, 'tom'     ],
+                [ 360, 'floortom'],
+                [ 540, 'tom'     ],
+                [ 720, 'floortom'],
+                [ 900, 'tom'     ],
+                [1080, 'crash'   ],
+                [1080, 'bass'    ],
+                [1350, 'tom'     ],
+                [1500, 'tom'     ],
+                [1650, 'floortom'],
+                [1800, 'tom'     ],
+                [1950, 'floortom'],
+                [2100, 'tom'     ],
+                [2280, 'snare'   ],
+                [2400, 'snare'   ],
+                [2550, 'tom'     ],
+                [2700, 'floortom'],
+                [2850, 'tom'     ],
+                [3000, 'tom'     ],
+                [3150, 'floortom'],
+                [3300, 'tom'     ],
+                [3420, 'tom'     ],
+                [3540, 'floortom'],
+                [3660, 'crash'   ],
+                [3660, 'bass'    ],
+                [3660, 'tom'     ],
+            ],
+        },
+        snare: {
+            duration: 4500,
+            hits: [
+                [   0, 'snare'],
+                [ 200, 'snare'],
+                [ 400, 'snare'],
+                [ 400, 'bass' ],
+                [ 600, 'snare'],
+                [ 750, 'snare'],
+                [ 900, 'snare'],
+                [ 900, 'bass' ],
+                [1050, 'snare'],
+                [1200, 'snare'],
+                [1200, 'hihat'],
+                [1350, 'snare'],
+                [1500, 'snare'],
+                [1500, 'bass' ],
+                [1650, 'snare'],
+                [1800, 'snare'],
+                [1800, 'tom'  ],
+                [2000, 'snare'],
+                [2200, 'snare'],
+                [2200, 'bass' ],
+                [2400, 'snare'],
+                [2550, 'snare'],
+                [2700, 'snare'],
+                [2700, 'hihat'],
+                [2850, 'snare'],
+                [3000, 'snare'],
+                [3000, 'bass' ],
+                [3150, 'snare'],
+                [3300, 'crash'],
+                [3300, 'snare'],
+                [3300, 'bass' ],
+            ],
+        },
+        bass: {
+            duration: 5000,
+            hits: [
+                [   0, 'bass'    ],
+                [ 300, 'bass'    ],
+                [ 300, 'floortom'],
+                [ 600, 'bass'    ],
+                [ 900, 'bass'    ],
+                [ 900, 'hihat'   ],
+                [1200, 'bass'    ],
+                [1200, 'floortom'],
+                [1500, 'bass'    ],
+                [1500, 'snare'   ],
+                [1800, 'bass'    ],
+                [2100, 'bass'    ],
+                [2100, 'floortom'],
+                [2400, 'bass'    ],
+                [2400, 'snare'   ],
+                [2600, 'bass'    ],
+                [2800, 'bass'    ],
+                [2800, 'floortom'],
+                [3000, 'bass'    ],
+                [3000, 'snare'   ],
+                [3200, 'bass'    ],
+                [3200, 'floortom'],
+                [3400, 'crash'   ],
+                [3400, 'bass'    ],
+            ],
+        },
+        floortom: {
+            duration: 5000,
+            hits: [
+                [   0, 'floortom'],
+                [ 200, 'floortom'],
+                [ 400, 'floortom'],
+                [ 400, 'bass'    ],
+                [ 600, 'floortom'],
+                [ 800, 'floortom'],
+                [ 800, 'tom'     ],
+                [1000, 'floortom'],
+                [1000, 'bass'    ],
+                [1200, 'floortom'],
+                [1400, 'floortom'],
+                [1400, 'snare'   ],
+                [1600, 'floortom'],
+                [1600, 'bass'    ],
+                [1800, 'floortom'],
+                [1800, 'tom'     ],
+                [2000, 'floortom'],
+                [2200, 'floortom'],
+                [2200, 'bass'    ],
+                [2400, 'floortom'],
+                [2400, 'snare'   ],
+                [2600, 'floortom'],
+                [2800, 'floortom'],
+                [2800, 'tom'     ],
+                [3000, 'floortom'],
+                [3000, 'bass'    ],
+                [3200, 'floortom'],
+                [3300, 'crash'   ],
+                [3300, 'floortom'],
+                [3300, 'bass'    ],
+            ],
+        },
+    };
+
+    function fireHit(instrument) {
+        const el = document.querySelector('[data-instrument="' + instrument + '"]');
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top  + rect.height / 2;
+        el.dispatchEvent(new PointerEvent('pointerdown', {
+            bubbles:     true,
+            cancelable:  true,
+            clientX:     cx,
+            clientY:     cy,
+            pointerId:   1,
+            pointerType: 'mouse'
+        }));
+    }
+
+    function playHits(hitList) {
+        hitList.forEach(function (hit) {
+            setTimeout(function () { fireHit(hit[1]); }, hit[0]);
+        });
+    }
+
+    // ── Combo state ───────────────────────────────────────────────────────────
+    const ALL_INSTRUMENTS = new Set(['crash', 'hihat', 'tom', 'snare', 'bass', 'floortom']);
+    let soloPlaying = false;
+    let hitSoFar    = new Set();
+
+    const streaks     = {};
+    const resetTimers = {};
+    ALL_INSTRUMENTS.forEach(function (name) {
+        streaks[name]     = 0;
+        resetTimers[name] = null;
+    });
+    const STREAK_COMBO    = 3;
+    const STREAK_RESET_MS = 2000;
+
+    function resetAllStreaks() {
+        ALL_INSTRUMENTS.forEach(function (name) {
+            streaks[name] = 0;
+            clearTimeout(resetTimers[name]);
+        });
+    }
+
+    function setupComboListener() {
+        document.querySelectorAll('[data-instrument]').forEach(function (el) {
+            el.addEventListener('pointerdown', function () {
+                if (soloPlaying) return;
+
+                const instrument = el.getAttribute('data-instrument');
+
+                // Increment this instrument's streak; reset all others
+                ALL_INSTRUMENTS.forEach(function (name) {
+                    if (name !== instrument) {
+                        streaks[name] = 0;
+                        clearTimeout(resetTimers[name]);
+                    }
+                });
+                streaks[instrument]++;
+                clearTimeout(resetTimers[instrument]);
+
+                // Check for 3-in-a-row combo
+                if (streaks[instrument] >= STREAK_COMBO) {
+                    resetAllStreaks();
+                    hitSoFar    = new Set();
+                    soloPlaying = true;
+                    playHits(SOLOS[instrument].hits);
+                    setTimeout(function () { soloPlaying = false; }, SOLOS[instrument].duration);
+                    return;
+                }
+
+                // Schedule streak reset if no follow-up hit arrives in time
+                resetTimers[instrument] = setTimeout(function () {
+                    streaks[instrument] = 0;
+                }, STREAK_RESET_MS);
+
+                // All-6 combo: each instrument hit at least once
+                hitSoFar.add(instrument);
+                if (hitSoFar.size === ALL_INSTRUMENTS.size) {
+                    resetAllStreaks();
+                    hitSoFar    = new Set();
+                    soloPlaying = true;
+                    playHits(classicHits);
+                    setTimeout(function () { soloPlaying = false; }, 4500);
+                }
+            }, true);  // capture so it runs before main.js's debounce check
+        });
+    }
+
+    // Defer until DOMContentLoaded (safe whether the script is deferred or not),
+    // then add a short pause so main.js has finished setting up its listeners.
+    function init() {
+        setupComboListener();
+        setTimeout(function () { playHits(classicHits); }, 600);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+}());
+
+(function () {
+    // ── Solo 1: classic kit — triggered on page load or all-6-instruments combo ──
     const hits = [
         // Downbeat
         [  0,   'crash'   ],
@@ -33,6 +363,43 @@
         [3300,  'bass'    ],
     ];
 
+    // ── Solo 2: monkey solo — triggered by 3 tom hits in a row ───────────────
+    const monkeyHits = [
+        // Opening tom barrage
+        [   0,  'tom'     ],
+        [ 180,  'tom'     ],
+        [ 360,  'floortom'],
+        [ 540,  'tom'     ],
+        [ 720,  'floortom'],
+        [ 900,  'tom'     ],
+        // Crash accent
+        [1080,  'crash'   ],
+        [1080,  'bass'    ],
+        // Tom triplets
+        [1350,  'tom'     ],
+        [1500,  'tom'     ],
+        [1650,  'floortom'],
+        [1800,  'tom'     ],
+        [1950,  'floortom'],
+        [2100,  'tom'     ],
+        // Snare interruption
+        [2280,  'snare'   ],
+        [2400,  'snare'   ],
+        // Back to toms
+        [2550,  'tom'     ],
+        [2700,  'floortom'],
+        [2850,  'tom'     ],
+        [3000,  'tom'     ],
+        [3150,  'floortom'],
+        // Big finish
+        [3300,  'tom'     ],
+        [3420,  'tom'     ],
+        [3540,  'floortom'],
+        [3660,  'crash'   ],
+        [3660,  'bass'    ],
+        [3660,  'tom'     ],
+    ];
+
     function fireHit(instrument) {
         const el = document.querySelector('[data-instrument="' + instrument + '"]');
         if (!el) return;
@@ -55,16 +422,51 @@
         });
     }
 
+    function playMonkeySolo() {
+        monkeyHits.forEach(function (hit) {
+            setTimeout(function () { fireHit(hit[1]); }, hit[0]);
+        });
+    }
+
     // ── Secret combo: hit all 6 instruments to trigger the solo ──────────────
     const ALL_INSTRUMENTS = new Set(['crash', 'hihat', 'tom', 'snare', 'bass', 'floortom']);
     let soloPlaying = false;
     let hitSoFar    = new Set();
 
+    // ── Monkey combo: hit tom 3 times in a row ────────────────────────────────
+    let tomStreak       = 0;
+    const TOM_COMBO     = 3;
+    const TOM_RESET_MS  = 2000; // streak resets if no tom hit within this window
+    let tomResetTimer   = null;
+
     function setupComboListener() {
         document.querySelectorAll('[data-instrument]').forEach(function (el) {
             el.addEventListener('pointerdown', function () {
                 if (soloPlaying) return;           // ignore hits fired by the solo itself
-                hitSoFar.add(el.getAttribute('data-instrument'));
+
+                const instrument = el.getAttribute('data-instrument');
+
+                // Monkey combo tracking
+                if (instrument === 'tom') {
+                    tomStreak++;
+                    clearTimeout(tomResetTimer);
+                    if (tomStreak >= TOM_COMBO) {
+                        tomStreak   = 0;
+                        soloPlaying = true;
+                        playMonkeySolo();
+                        // longest monkey hit offset is 3660 ms; clear with a safe margin
+                        setTimeout(function () { soloPlaying = false; }, 5000);
+                        return;
+                    }
+                    tomResetTimer = setTimeout(function () { tomStreak = 0; }, TOM_RESET_MS);
+                } else {
+                    // Any non-tom hit resets the tom streak
+                    tomStreak = 0;
+                    clearTimeout(tomResetTimer);
+                }
+
+                // All-6 combo tracking
+                hitSoFar.add(instrument);
                 if (hitSoFar.size === ALL_INSTRUMENTS.size) {
                     hitSoFar = new Set();
                     soloPlaying = true;
