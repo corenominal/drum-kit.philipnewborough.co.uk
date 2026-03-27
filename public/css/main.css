@@ -86,7 +86,7 @@ body {
 
 }
 
-@media (min-width: 992px) {
+@media (orientation: landscape) {
     .drumkit {
         grid-template-columns: 33.333% 33.333% 33.333%;
         grid-template-rows: 50% 50%;

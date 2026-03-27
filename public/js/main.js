@@ -122,47 +122,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Rotate drum images to stay upright when the device is physically rotated
-    // (uses DeviceOrientationEvent.gamma for physical tilt, composing with CSS
-    // animations via the independent `rotate` CSS property)
-    (function () {
-        if (!window.DeviceOrientationEvent) return;
-
-        const imgs = document.querySelectorAll('.instrument img');
-        let lastSnap = 0;
-
-        function applyRotation(deg) {
-            imgs.forEach(function (img) {
-                img.style.rotate = deg + 'deg';
-            });
-        }
-
-        function handleOrientation(e) {
-            const gamma = e.gamma || 0;
-            let snap = 0;
-            if (gamma > 45) snap = -90;
-            else if (gamma < -45) snap = 90;
-            if (snap === lastSnap) return;
-            lastSnap = snap;
-            applyRotation(snap);
-        }
-
-        function startListening() {
-            window.addEventListener('deviceorientation', handleOrientation, true);
-        }
-
-        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-            // iOS 13+ requires a user gesture to grant permission
-            document.addEventListener('touchstart', function () {
-                DeviceOrientationEvent.requestPermission()
-                    .then(function (state) { if (state === 'granted') startListening(); })
-                    .catch(function () {});
-            }, { once: true });
-        } else {
-            startListening();
-        }
-    }());
-
     // Display cache version
     if ('caches' in window) {
         caches.keys().then(function (keys) {
