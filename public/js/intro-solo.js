@@ -300,6 +300,43 @@
         });
     }
 
+    // ── Pair combo: dynamically build a solo from two alternating instruments ──
+    function generatePairSolo(instrA, instrB) {
+        var hits    = [];
+        var hasBass  = instrA === 'bass'  || instrB === 'bass';
+        var hasCrash = instrA === 'crash' || instrB === 'crash';
+        var kick     = hasBass  ? null : 'bass';
+        var accent   = hasCrash ? null : 'crash';
+
+        // Phase 1 — establish the A-B pattern (0–900 ms)
+        [[0, instrA], [300, instrB], [600, instrA], [900, instrB]].forEach(function (h) { hits.push(h); });
+        if (kick) hits.push([0, kick]);
+
+        // Phase 2 — tighter interplay with kick support (1200–2100 ms)
+        [[1200, instrA], [1380, instrB], [1560, instrA], [1740, instrB], [1920, instrA], [2100, instrB]].forEach(function (h) { hits.push(h); });
+        if (kick) { hits.push([1200, kick]); hits.push([1920, kick]); }
+
+        // Phase 3 — intensity build (2300–3050 ms)
+        [[2300, instrA], [2450, instrB], [2600, instrA], [2750, instrB], [2900, instrA], [3050, instrB]].forEach(function (h) { hits.push(h); });
+        if (kick) hits.push([2900, kick]);
+
+        // Ending flourish
+        if (accent) hits.push([3300, accent]);
+        if (kick)   hits.push([3300, kick]);
+        hits.push([3300, instrA]);
+
+        return { hits: hits, duration: 4200 };
+    }
+
+    var pairBuffer     = [];
+    var pairResetTimer = null;
+    var PAIR_RESET_MS  = 3000;
+
+    function resetPairBuffer() {
+        pairBuffer = [];
+        clearTimeout(pairResetTimer);
+    }
+
     function setupComboListener() {
         document.querySelectorAll('[data-instrument]').forEach(function (el) {
             el.addEventListener('pointerdown', function (event) {
@@ -308,6 +345,11 @@
                 if (window._drumKitActiveLoops && Object.keys(window._drumKitActiveLoops).length > 0) return;
 
                 const instrument = el.getAttribute('data-instrument');
+
+                // Track last 4 hits for A-B-A-B pair combo
+                pairBuffer.push(instrument);
+                if (pairBuffer.length > 4) pairBuffer.shift();
+                clearTimeout(pairResetTimer);
 
                 // Increment this instrument's streak; reset all others
                 ALL_INSTRUMENTS.forEach(function (name) {
@@ -322,6 +364,7 @@
                 // Check for 3-in-a-row combo
                 if (streaks[instrument] >= STREAK_COMBO) {
                     resetAllStreaks();
+                    resetPairBuffer();
                     hitSoFar    = new Set();
                     soloPlaying = true;
                     showCombo();
@@ -330,15 +373,35 @@
                     return;
                 }
 
+                // Check for A-B-A-B pair combo
+                if (pairBuffer.length === 4) {
+                    var pa = pairBuffer[0], pb = pairBuffer[1];
+                    if (pa === pairBuffer[2] && pb === pairBuffer[3] && pa !== pb) {
+                        resetAllStreaks();
+                        resetPairBuffer();
+                        hitSoFar    = new Set();
+                        soloPlaying = true;
+                        showCombo();
+                        var combo = generatePairSolo(pa, pb);
+                        playHits(combo.hits);
+                        setTimeout(function () { soloPlaying = false; }, combo.duration);
+                        return;
+                    }
+                }
+
                 // Schedule streak reset if no follow-up hit arrives in time
                 resetTimers[instrument] = setTimeout(function () {
                     streaks[instrument] = 0;
                 }, STREAK_RESET_MS);
 
+                // Schedule pair buffer reset if no follow-up hit arrives
+                pairResetTimer = setTimeout(function () { pairBuffer = []; }, PAIR_RESET_MS);
+
                 // All-6 combo: each instrument hit at least once
                 hitSoFar.add(instrument);
                 if (hitSoFar.size === ALL_INSTRUMENTS.size) {
                     resetAllStreaks();
+                    resetPairBuffer();
                     hitSoFar    = new Set();
                     soloPlaying = true;
                     showCombo();
